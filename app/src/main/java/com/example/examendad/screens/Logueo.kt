@@ -31,8 +31,9 @@ import com.example.examendad.R
 fun Logueo(onSendButtonClicked: () -> Unit){
 
     var showError by remember { mutableStateOf(true) }
-    var user by remember { mutableStateOf(TextFieldValue("")) }
+    var user by remember { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier
@@ -44,47 +45,44 @@ fun Logueo(onSendButtonClicked: () -> Unit){
     ) {
         Image(painter = painterResource(id = R.drawable.logo), contentDescription = "Logo")
         Text("Usuario", color = MaterialTheme.colorScheme.secondary)
-        OutLineTextFieldUser()
-        OutLineTextFieldPassword()
-        Column {
+        OutLineTextFieldUser(user) { newUser ->
+            user = newUser
+        }
+        OutLineTextFieldPassword(password) { newPassword ->
+            password = newPassword
+        }
+        if (user.isEmpty() || password.isEmpty()) {
+            Text("Por favor, completa todos los campos.", color = Color.Red)
+        } else {
+            showError = false
             Button(onClick = {
-                if (user.text.isEmpty() ||password.isEmpty()){
-                    showError = true
-                } else {
-                    showError = false
-                    onSendButtonClicked()
-                }
+                onSendButtonClicked()
             }) {
                 Text(text = "Enabled")
             }
-        }
-        if (showError) {
-            Text("Por favor, completa todos los campos.", color = Color.Red)
         }
     }
 }
 
 
 @Composable
-fun OutLineTextFieldUser() {
-    var user = remember { mutableStateOf(TextFieldValue("")) }
+fun OutLineTextFieldUser(user: String, onUserChange: (String) -> Unit) {
     OutlinedTextField(
         modifier = Modifier.padding(vertical = 10.dp),
-        value = user.value,
+        value = user,
         label = { Text(text = "Introduce tu usuario") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         onValueChange = {
-            user.value = it
+            newValue -> onUserChange(newValue)
         }
     )
 }
 
 @Composable
-fun OutLineTextFieldPassword() {
-    var password = rememberSaveable { mutableStateOf("") }
+fun OutLineTextFieldPassword(password: String, onPasswordChange: (String) -> Unit) {
     OutlinedTextField(
-        value = password.value,
-        onValueChange = { password.value = it },
+        value = password,
+        onValueChange = { newValue -> onPasswordChange(newValue) },
         label = { Text(text = "Introduce tu contraseña") },
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)

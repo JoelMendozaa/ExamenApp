@@ -92,12 +92,16 @@ fun FilledCardExample() {
         Row {
         Text(text = "Imagen ${numero +1}", modifier = Modifier.weight(1f))
         IconButton(onClick = {
-
+            showBottomSheet = true // me faltaba esto
         }){
             Icon(painter = painterResource(id = R.drawable.baseline_apps_24), contentDescription = "More")
         }
         }
     }
+    if (showBottomSheet){
+        BottomSheetContent()	// Faltaba esto
+    }
+
 }
 
 @Composable
